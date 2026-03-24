@@ -2,19 +2,49 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string>("");
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError("");
     setPending(true);
-    router.push("/dashboard");
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const email = formData.get("email") as string;
+      const password = formData.get("password") as string;
+
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
+        setPending(false);
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch (err) {
+      setError("Une erreur est survenue lors de la connexion");
+      setPending(false);
+    }
   }
 
   return (
     <>
+      {error && (
+        <div className="rounded-[var(--radius-mp-inner)] border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+          {error}
+        </div>
+      )}
       <form className="space-y-4" onSubmit={onSubmit}>
         <div className="space-y-1.5">
           <label
@@ -79,7 +109,7 @@ export function LoginForm() {
       <button
         type="button"
         className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-mp-border bg-mp-bg text-sm font-bold text-mp-text transition-colors hover:border-black/20"
-        onClick={() => router.push("/dashboard")}
+        onClick={() => router.push("/auth/sign-up")}
       >
         <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden>
           <path
@@ -99,11 +129,11 @@ export function LoginForm() {
             d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
           />
         </svg>
-        Continuer avec Google (démo)
+        Créer un compte
       </button>
 
       <p className="rounded-[var(--radius-mp-inner)] border border-mp-border bg-mp-bg px-3 py-2 text-center text-[11px] font-medium text-mp-muted">
-        Mode démo : aucun compte réel — vous accédez directement au tableau de bord.
+        Utilisez vos identifiants Supabase pour vous connecter à votre espace.
       </p>
     </>
   );
