@@ -1,5 +1,9 @@
--- Table optionnelle pour la persistance en production (Supabase).
--- Colonnes en snake_case ; mapping applicatif dans lib/api/store-supabase.ts
+-- Persistance API (service role) : ids TEXT, tenant_id TEXT, sans RLS utilisateur.
+-- Pour le schéma complet (Auth, UUID, RLS, api_keys, devices), voir :
+--   scripts/001_create_schema.sql
+-- Ne pas appliquer les deux jeux de migrations sur la même base sans fusion manuelle.
+--
+-- Colonnes snake_case ; mapping dans lib/api/store-supabase.ts
 
 create table if not exists public.sikaflow_transactions (
   id text primary key,
