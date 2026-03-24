@@ -14,19 +14,19 @@ import {
 } from "@/lib/api/store-supabase";
 import type { ListTransactionsFilters } from "@/lib/api/transaction-query";
 
-function useSupabase(): boolean {
+function persistenceUsesSupabase(): boolean {
   return isSupabaseConfigured();
 }
 
 export async function svcListTransactions(filters: ListTransactionsFilters) {
-  if (useSupabase()) return listTransactionsSupabase(filters);
+  if (persistenceUsesSupabase()) return listTransactionsSupabase(filters);
   return listTransactions(filters);
 }
 
 export async function svcGetTransactionById(
   id: string
 ): Promise<PublicTransactionDetail | undefined> {
-  if (useSupabase()) return getTransactionByIdSupabase(id);
+  if (persistenceUsesSupabase()) return getTransactionByIdSupabase(id);
   return getTransactionById(id);
 }
 
@@ -34,11 +34,11 @@ export async function svcTagTransaction(
   id: string,
   payload: { externalRef?: string; metadata?: Record<string, unknown> }
 ): Promise<PublicTransactionDetail | undefined> {
-  if (useSupabase()) return tagTransactionSupabase(id, payload);
+  if (persistenceUsesSupabase()) return tagTransactionSupabase(id, payload);
   return tagTransaction(id, payload);
 }
 
 export async function svcComputeStats() {
-  if (useSupabase()) return computeStatsSupabase();
+  if (persistenceUsesSupabase()) return computeStatsSupabase();
   return computeStats();
 }

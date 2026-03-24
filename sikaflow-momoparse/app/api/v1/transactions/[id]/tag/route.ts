@@ -51,7 +51,8 @@ export async function POST(request: Request, context: Ctx) {
     return jsonError("Transaction not found", 404);
   }
 
-  const { rawSms: _raw, ...publicPart } = updated;
+  const { rawSms, ...publicPart } = updated;
+  void rawSms;
 
   return jsonSuccess(
     {

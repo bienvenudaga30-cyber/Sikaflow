@@ -38,7 +38,7 @@ export default function SignUpSuccessPage() {
         </div>
 
         <div className="rounded-[var(--radius-mp-inner)] border border-mp-border bg-mp-bg p-4 text-sm font-medium text-mp-muted">
-          Vous ne voyez pas l'email ? Vérifiez votre dossier spam ou vos
+          Vous ne voyez pas l&apos;email ? Vérifiez votre dossier spam ou vos
           filtres.
         </div>
 

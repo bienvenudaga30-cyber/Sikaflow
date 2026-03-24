@@ -32,7 +32,7 @@ export function LoginForm() {
       }
 
       router.push("/dashboard");
-    } catch (err) {
+    } catch {
       setError("Une erreur est survenue lors de la connexion");
       setPending(false);
     }

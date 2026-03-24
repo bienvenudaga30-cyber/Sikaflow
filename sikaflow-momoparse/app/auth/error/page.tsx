@@ -28,10 +28,10 @@ export default function AuthErrorPage() {
 
         <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight text-mp-text">
-            Erreur d'authentification
+            Erreur d&apos;authentification
           </h1>
           <p className="text-base font-medium text-mp-muted">
-            Une erreur s'est produite lors du processus d'authentification.
+            Une erreur s&apos;est produite lors du processus d&apos;authentification.
             Veuillez réessayer ou contacter le support.
           </p>
         </div>

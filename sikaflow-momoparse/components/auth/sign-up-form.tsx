@@ -51,7 +51,7 @@ export function SignUpForm() {
       }
 
       router.push("/auth/sign-up-success");
-    } catch (err) {
+    } catch {
       setError("Une erreur est survenue lors de l'inscription");
       setPending(false);
     }

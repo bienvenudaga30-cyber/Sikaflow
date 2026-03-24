@@ -12,7 +12,8 @@ export type ListTransactionsFilters = {
 };
 
 function toPublic(r: PublicTransactionDetail): PublicTransaction {
-  const { rawSms: _, ...rest } = r;
+  const { rawSms, ...rest } = r;
+  void rawSms;
   return rest;
 }
 
