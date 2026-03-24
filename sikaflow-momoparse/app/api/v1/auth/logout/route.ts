@@ -1,8 +1,16 @@
-import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseAuthConfigured } from "@/lib/supabase/auth-env";
 
 export async function POST() {
-  const supabase = await createClient()
+  if (!isSupabaseAuthConfigured()) {
+    return NextResponse.json(
+      { error: "Supabase Auth non configurée sur ce déploiement." },
+      { status: 503 }
+    );
+  }
+
+  const supabase = await createClient();
 
   const { error } = await supabase.auth.signOut()
 

@@ -1,8 +1,11 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
+import { isSupabaseAuthConfigured } from '@/lib/supabase/auth-env'
 import { updateSession } from '@/lib/supabase/proxy'
 
 export async function middleware(request: NextRequest) {
-  // update user's auth session
+  if (!isSupabaseAuthConfigured()) {
+    return NextResponse.next()
+  }
   return await updateSession(request)
 }
 

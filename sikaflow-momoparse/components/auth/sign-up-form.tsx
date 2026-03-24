@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isSupabaseAuthConfigured } from "@/lib/supabase/auth-env";
 
 export function SignUpForm() {
   const router = useRouter();
@@ -13,6 +14,14 @@ export function SignUpForm() {
     e.preventDefault();
     setError("");
     setPending(true);
+
+    if (!isSupabaseAuthConfigured()) {
+      setError(
+        "Supabase n’est pas configuré. Ajoutez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY dans .env.local, ou connectez-vous en mode démo depuis la page Connexion."
+      );
+      setPending(false);
+      return;
+    }
 
     try {
       const formData = new FormData(e.currentTarget);

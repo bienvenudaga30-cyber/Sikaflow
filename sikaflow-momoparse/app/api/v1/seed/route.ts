@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isSupabaseAuthConfigured } from "@/lib/supabase/auth-env";
 
 const sampleTransactions = [
   {
@@ -56,6 +57,13 @@ const sampleTransactions = [
 
 export async function POST() {
   try {
+    if (!isSupabaseAuthConfigured()) {
+      return NextResponse.json(
+        { error: "Supabase Auth requis pour initialiser des données." },
+        { status: 503 }
+      );
+    }
+
     const supabase = await createClient();
     
     const { data: userData, error: userError } = await supabase.auth.getUser();

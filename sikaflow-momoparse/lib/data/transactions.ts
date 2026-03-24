@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { formatXof } from "@/lib/format-currency";
+import { isSupabaseAuthConfigured } from "@/lib/supabase/auth-env";
+import { recentTxMock } from "@/lib/mock-data";
 
 export type Operator = "mtn" | "moov" | "celtiis";
 export type TxType = "received" | "sent" | "payment" | "withdrawal";
@@ -43,7 +45,43 @@ function formatDate(date: Date): string {
   }) + " " + formatTime(date);
 }
 
+const DEMO_AMOUNTS = [25_000, 4500, 8000];
+
+function demoTransactions(limit: number): Transaction[] {
+  return recentTxMock.slice(0, limit).map((r, i) => ({
+    id: r.id,
+    time: r.time,
+    date: r.date,
+    operator: r.operator,
+    type: r.type,
+    amount: r.amount,
+    amountRaw: DEMO_AMOUNTS[i] ?? 0,
+    reference: r.reference,
+    status: r.status,
+    rawSms: r.rawSms,
+    counterparty: null,
+  }));
+}
+
+const DEMO_STATS: DashboardStats = {
+  volume24h: 245_000,
+  transactions24h: 42,
+  parseRate: 98.5,
+  devicesOnline: 2,
+  devicesTotal: 3,
+};
+
+const DEMO_BY_OPERATOR: Record<Operator, { count: number; volume: number }> = {
+  mtn: { count: 45, volume: 892_000 },
+  moov: { count: 32, volume: 324_000 },
+  celtiis: { count: 12, volume: 78_000 },
+};
+
 export async function getRecentTransactions(limit = 10): Promise<Transaction[]> {
+  if (!isSupabaseAuthConfigured()) {
+    return demoTransactions(limit);
+  }
+
   const supabase = await createClient();
   
   const { data: userData } = await supabase.auth.getUser();
@@ -86,6 +124,10 @@ export async function getLiveFeed(limit = 5): Promise<Transaction[]> {
 }
 
 export async function getDashboardStats(): Promise<DashboardStats> {
+  if (!isSupabaseAuthConfigured()) {
+    return { ...DEMO_STATS };
+  }
+
   const supabase = await createClient();
   
   const { data: userData } = await supabase.auth.getUser();
@@ -147,6 +189,10 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 }
 
 export async function getTransactionsByOperator(): Promise<Record<Operator, { count: number; volume: number }>> {
+  if (!isSupabaseAuthConfigured()) {
+    return { ...DEMO_BY_OPERATOR };
+  }
+
   const supabase = await createClient();
   
   const { data: userData } = await supabase.auth.getUser();

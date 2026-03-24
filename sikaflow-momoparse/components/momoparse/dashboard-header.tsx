@@ -5,14 +5,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlanBadge } from "@/components/momoparse/badge";
 import { createClient } from "@/lib/supabase/client";
+import { isSupabaseAuthConfigured } from "@/lib/supabase/auth-env";
 
 export function DashboardHeader({ plan = "PRO" }: { plan?: "PRO" | "FREE" }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    if (isSupabaseAuthConfigured()) {
+      try {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+      } catch {
+        /* ignore */
+      }
+    }
     router.push("/login");
   }
 

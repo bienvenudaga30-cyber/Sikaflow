@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { isSupabaseAuthConfigured } from "@/lib/supabase/auth-env";
+import { apiKeysMock } from "@/lib/mock-data";
 
 export interface ApiKey {
   id: string;
@@ -27,6 +29,10 @@ function formatLastUsed(date: string | null): string {
 }
 
 export async function getApiKeys(): Promise<ApiKey[]> {
+  if (!isSupabaseAuthConfigured()) {
+    return apiKeysMock as ApiKey[];
+  }
+
   const supabase = await createClient();
   
   const { data: userData } = await supabase.auth.getUser();
